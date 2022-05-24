@@ -25,7 +25,6 @@ from Services import BackupService
 
 def main(args: dict) -> bool:
     try:
-        backup_dict = {}
         server = args['SERVERNAME']
         source = args['SOURCE']
         destination = args['DESTINATION']
@@ -38,12 +37,20 @@ def main(args: dict) -> bool:
             raise ValueError(f"Destination path: {destination} does not exist")
         if not os.path.exists(seven):
             raise ValueError(f"Sevenzip not located at {seven}")
-        backup_dict = {'Server': server,
-                       'Source': source,
-                       'Dest': destination,
-                       'Seven': seven,
-                       'Feeders': feeders,
-                       'Retention': keep}
+        if keep:
+            backup_dict = {'Server': server,
+                           'Source': source,
+                           'Dest': destination,
+                           'Seven': seven,
+                           'Feeders': feeders,
+                           'Retention': keep}
+        else:
+            backup_dict = {'Server': server,
+                           'Source': source,
+                           'Dest': destination,
+                           'Seven': seven,
+                           'Feeders': feeders,
+                           'Retention': 1}
         bkp = BackupService(**backup_dict)
         bkp.backup()
         return True
@@ -54,7 +61,7 @@ def main(args: dict) -> bool:
 
 if __name__ == "__main__":
     start_time = time.perf_counter()
-    cmd_args = docopt(__doc__, version="TM1_Cloud_backup.exe by GL Consulting Services, 2.0")
+    cmd_args = docopt(__doc__, version="TM1_Cloud_backup.exe Version 2.2")
     success = main(cmd_args)
     if success:
         end_time = time.perf_counter()
